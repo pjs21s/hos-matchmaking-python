@@ -1,42 +1,26 @@
 import collections
-from enum import Enum
 from typing import Dict, List, Deque, Optional
 
-from pydantic import BaseModel
-
-class Role(str, Enum):
-    TANK = "TANK"
-    HEALER = "HEALER"
-    ASSASSIN = "ASSASSIN"
-    BRUISER = "BRUISER"
-
-class Player(BaseModel):
-    id: int
-    name: str
-    role: Role
+from matchmaking.domain.models import Player, Role
 
 
 class MatchmakingService:
     def __init__(self):
         self.waiting_queues: Dict[Role, Deque[Player]] = {role: collections.deque() for role in Role}
-        self.next_player_id = 1
         print("MatchmakingService가 준비되었습니다.")
 
     def get_queue_status(self) -> Dict[str, list]:
         """디버깅을 위해 현재 대기열 상태를 반환"""
         status = {}
         for role, queue in self.waiting_queues.items():
-            status[role.value] = [player.model_dump() for player in queue] # TODO: BaseModel dict 메소드 더 이상 사용되지 않으므로 수정 필요
+            status[role.value] = [player.model_dump() for player in queue]
         return status
     
-    def add_player(self, name: str, role: Role) -> Player:
-        """새로운 플레이어를 생성하여 역할에 맞는 대기열에 추가"""
+    def add_player_to_queue(self, player: Player):
+        """생성된 플레이어 객체를 받아 대기열에 추가"""
 
-        new_player = Player(id=self.next_player_id, name=name, role=role)
-        self.waiting_queues[role].append(new_player)
-        self.next_player_id += 1
-        print(f"[플레이어 추가] {new_player.model_dump()} 님이 대기열에 참가했습니다.")
-        return new_player
+        self.waiting_queues[player.role].append(player)
+        print(f"[플레이어 추가] {player.model_dump()} 님이 대기열에 참가했습니다.")
 
     def try_create_team(self) -> Optional[List[Player]]:
         """1탱, 1힐, 3자유 역할 규칙으로 5인 팀 구성을 시도"""

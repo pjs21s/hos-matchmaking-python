@@ -1,4 +1,7 @@
-from matchmaking.service import MatchmakingService, Role
+import random
+from matchmaking.data.roster import CharacterRoster
+from matchmaking.data.player_repository import PlayerRepository
+from matchmaking.service.matchmaking_service import MatchmakingService
 
 def run_test_scenario():
     """
@@ -6,29 +9,35 @@ def run_test_scenario():
     """
 
     print("--- 매치메이킹 시뮬레이션 시작 --- \n")
+    roster = CharacterRoster(data_path="characters.json")
+    player_repo = PlayerRepository(roster=roster)
+    matchmaking_service = MatchmakingService()
 
-    service = MatchmakingService()
+    print("\n[1단계] 로스터에서 캐릭터를 선택하여 플레이어를 생성하고 대기열에 추가")
 
-    print("\n[1단계] 테스트 플레이어들을 대기열에 추가합니다.")
-    service.add_player(name="요한나", role=Role.TANK)
-    service.add_player(name="알렉스트라자", role=Role.HEALER)
-    service.add_player(name="제이나", role=Role.ASSASSIN)
-    service.add_player(name="레이너", role=Role.ASSASSIN)
+    tank_chars = [c for c in roster.get_all_characters() if c.role.value == "TANK"]
+    healer_chars = [c for c in roster.get_all_characters() if c.role.value == "HEALER"]
+    other_chars = [c for c in roster.get_all_characters() if c.role.value not in ["TANK", "HEALER"]]
 
-    print("\n --- 첫 번째 매칭 시도 (실패 예상) ---")
-    service.try_create_team()
+    player_one = player_repo.create_player(character_id=random.choice(tank_chars).id)
+    matchmaking_service.add_player_to_queue(player_one)
 
-    print("\n[2단계] 5번째 플레이어를 추가")
-    service.add_player(name="소냐", role=Role.BRUISER)
+    player_two = player_repo.create_player(character_id=random.choice(healer_chars).id)
+    matchmaking_service.add_player_to_queue(player_two)
 
-    print("\n --- 두 번째 매칭 시도 (성공 예상) ---")
-    team = service.try_create_team()
+    for _ in range(3):
+        random_char = random.choice(other_chars)
+        p = player_repo.create_player(character_id=random_char.id)
+        matchmaking_service.add_player_to_queue(p)
+        other_chars.remove(random_char)
 
-    print("\n[3단계] 최종 결과 확인")
+    print("\n[2단계] 매칭을 시도합니다.")
+    team = matchmaking_service.try_create_team()
+
     if team:
         print("최종 매칭 성공! 생성된 팀 아래와 같음")
         for player in team:
-            print(f" - {player.dict()}")
+            print(f" - {player.model_dump()}")
     else:
         print("최종 매칭 실패")
     

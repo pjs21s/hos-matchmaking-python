@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "요한나",
+    "role": "TANK"
+  },
+  {
+    "id": 2,
+    "name": "무라딘",
+    "role": "TANK"
+  },
+  {
+    "id": 11,
+    "name": "알렉스트라자",
+    "role": "HEALER"
+  },
+  {
+    "id": 12,
+    "name": "안두인",
+    "role": "HEALER"
+  },
+  {
+    "id": 13,
+    "name": "카라짐",
+    "role": "HEALER"
+  },
+  {
+    "id": 21,
+    "name": "제이나",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 22,
+    "name": "레이너",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 23,
+    "name": "실바나스",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 31,
+    "name": "소냐",
+    "role": "BRUISER"
+  },
+  {
+    "id": 32,
+    "name": "데하카",
+    "role": "BRUISER"
+  }
+]
