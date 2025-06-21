@@ -1,0 +1,6 @@
+# Web Framework
+fastapi
+uvicorn[standard]
+
+# Testing
+pytest
