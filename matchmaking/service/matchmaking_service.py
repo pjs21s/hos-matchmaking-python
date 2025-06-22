@@ -52,6 +52,29 @@ class MatchmakingService:
         
         print(f"[성공] 팀 구성 완료: {[p.model_dump() for p in team]}")
         return team
+    
+    def _calculate_team_avg_mmr(self, team: List[Player]) -> float:
+        """팀의 평균 MMR을 계산"""
+        if not team:
+            return 0.0
+        total_mmr = sum(player.mmr for player in team)
+        return total_mmr / len(team)
+    
+    def _are_teams_balanced(self, team_a: List[Player], team_b: List[Player]) -> bool:
+        """두 팀의 MMR 밸런스가 허용 범위 내인지 확인"""
+        avg_mmr_a = self._calculate_team_avg_mmr(team_a)
+        avg_mmr_b = self._calculate_team_avg_mmr(team_b)
+
+        mmr_difference_threshold = 100
+
+        print(f" -> 밸런스 확인: A팀 평균 MMR({avg_mmr_a:.2f}) vs B팀 평균 MMR({avg_mmr_b:.2f})")
+
+        if abs(avg_mmr_a - avg_mmr_b) > mmr_difference_threshold:
+            print("불균형")
+            # TODO: 플레이어 교환 로직 추가하여 밸런스 맞추기 시도
+            return False
+        
+        return True
 
     def try_create_match(self) -> Optional[Match]:
         """
@@ -78,6 +101,15 @@ class MatchmakingService:
         
         print(f"-> B팀 구성 성공: {[p.name for p in team_b]}")
 
-        # TODO: MMR 조정 위치
+        if not self._are_teams_balanced(team_a, team_b):
+            print("최종 매칭 실패, 대기열로 복귀")
+            self._return_players_to_queue(team_a)
+            self._return_players_to_queue(team_b)
+            return None
+        
         print("양 팀 구성 완료 최종 게임 생성")
-        return Match(team_a=team_a, team_b=team_b)
+        return Match(team_a=team_a,
+                     team_b=team_b,
+                     avg_mmr_a=self._calculate_team_avg_mmr(team_a),
+                     avg_mmr_b=self._calculate_team_avg_mmr(team_b),
+                     )

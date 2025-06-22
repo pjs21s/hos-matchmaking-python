@@ -1,3 +1,4 @@
+import random
 from typing import Dict, Optional
 
 from matchmaking.domain.models import Player
@@ -5,7 +6,7 @@ from matchmaking.data.roster import CharacterRoster
 
 class PlayerRepository:
     def __init__(self, roster: CharacterRoster):
-        self._players: Dict[int, Player] = {} # _로 시작하는건 내부 변수??
+        self._players: Dict[int, Player] = {}
         self._next_player_id = 1
         self.roster = roster
         print("PlayerRepostiory 준비")
@@ -16,11 +17,15 @@ class PlayerRepository:
         if not character_template:
             print(f"[Repository 오류] ID {character_id}에 해당하는 캐릭터가 없습니다.")
             return None
+        
+        # Random MMR 생성
+        player_mmr = random.randint(1500, 3500)
     
         new_player = Player(
             id=self._next_player_id,
             name=character_template.name,
-            role=character_template.role
+            role=character_template.role,
+            mmr=player_mmr
         )
 
         self._players[self._next_player_id] = new_player

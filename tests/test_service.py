@@ -3,7 +3,7 @@ import pytest
 from matchmaking.data.roster import CharacterRoster
 from matchmaking.data.player_repository import PlayerRepository
 from matchmaking.service.matchmaking_service import MatchmakingService
-from matchmaking.domain.models import Role, Match
+from matchmaking.domain.models import Role, Match, Player
 from matchmaking.core.config import PLAYERS_PER_TEAM
 
 # --- Pytest Fixture: 테스트를 위한 준비 과정을 도와줌
@@ -26,10 +26,46 @@ def matchmaking_service() -> MatchmakingService:
     """테스트할 대상인 매치메이킹 서비스 객체를 생성"""
     return MatchmakingService()
 
+# --- MMR 관련 로직 단위 테스트 ---
+
+def test_calculate_average_mmr(matchmaking_service: MatchmakingService):
+    """팀의 평귱 MMR 계산 로직 검증"""
+    team1 = [
+        Player(id=1, name="A", role=Role.TANK, mmr=1000),
+        Player(id=2, name="B", role=Role.HEALER, mmr=2000),
+        Player(id=3, name="C", role=Role.ASSASSIN, mmr=3000),
+    ]
+    team2_empty = []
+    team3_single = [Player(id=4, name="D", role=Role.BRUISER, mmr=2500)]
+
+    avg_mmr1 = matchmaking_service._calculate_team_avg_mmr(team1)
+    avg_mmr2 = matchmaking_service._calculate_team_avg_mmr(team2_empty)
+    avg_mmr3 = matchmaking_service._calculate_team_avg_mmr(team3_single)
+
+    assert avg_mmr1 == 2000.0
+    assert avg_mmr2 == 0.0
+    assert avg_mmr3 == 2500.0
+
+def test_team_balance_check(matchmaking_service: MatchmakingService):
+    """두 팀 간의 밸런스가 맞는지 확인하는 로직을 검증"""
+
+    team_a_balanced = [Player(id=1, name="A", role=Role.TANK, mmr=2000)]
+    team_b_balanced = [Player(id=2, name="B", role=Role.HEALER, mmr=2050)]
+
+    team_a_unbalanced = [Player(id=3, name="C", role=Role.TANK, mmr=2000)]
+    team_b_unbalanced = [Player(id=4, name="D", role=Role.HEALER, mmr=2200)]
+    
+    team_a_boundary = [Player(id=5, name="E", role=Role.TANK, mmr=2000)]
+    team_b_boundary = [Player(id=6, name="F", role=Role.HEALER, mmr=2100)]
+
+    assert matchmaking_service._are_teams_balanced(team_a_balanced, team_b_balanced) is True
+    assert matchmaking_service._are_teams_balanced(team_a_unbalanced, team_b_unbalanced) is False
+    assert matchmaking_service._are_teams_balanced(team_a_boundary, team_b_boundary) is True
+
 # --- 팀 생성 내부 메소드에 대한 단위 테스트 ---
 
 def test__find_and_form_one_team_successful(matchmaking_service: MatchmakingService, player_repo: PlayerRepository):
-    """(단위 테스트) 5인 팀이 성공적으로 구성되는지 테스트"""
+    """5인 팀이 성공적으로 구성되는지 테스트"""
     player_ids = [1, 11, 21, 22, 31]  # 탱커, 힐러, 암살자2, 투사1
     for pid in player_ids:
         matchmaking_service.add_player_to_queue(player_repo.create_player(pid))
@@ -41,7 +77,7 @@ def test__find_and_form_one_team_successful(matchmaking_service: MatchmakingServ
     assert matchmaking_service.get_total_players() == 0
 
 def test__find_and_form_one_team_fails_without_healer(matchmaking_service: MatchmakingService, player_repo: PlayerRepository):
-    """(단위 테스트) 힐러가 없을 때 5인 팀 구성이 실패하는지 테스트합니다."""
+    """ 힐러가 없을 때 5인 팀 구성이 실패하는지 테스트"""
     player_ids = [1, 21, 22, 31, 32] # 힐러 없음
     for pid in player_ids:
         matchmaking_service.add_player_to_queue(player_repo.create_player(pid))
