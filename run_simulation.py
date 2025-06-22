@@ -2,6 +2,8 @@ import random
 from matchmaking.data.roster import CharacterRoster
 from matchmaking.data.player_repository import PlayerRepository
 from matchmaking.service.matchmaking_service import MatchmakingService
+from matchmaking.core.config import PLAYERS_PER_MATCH
+
 
 def run_10_player_scenario():
     print("--- 10인 매치 시뮬레이션 시작 ---\n")
@@ -15,7 +17,7 @@ def run_10_player_scenario():
     all_character_ids = [c.id for c in roster.get_all_characters()]
     
     try:
-        selected_ids = random.sample(all_character_ids, 12)
+        selected_ids = random.sample(all_character_ids, PLAYERS_PER_MATCH + 2)
     except ValueError:
         print("[오류] characters.json에 정의된 캐릭터가 12명보다 적다.")
         return

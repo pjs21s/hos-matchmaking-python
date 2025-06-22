@@ -2,6 +2,7 @@ import collections
 from typing import Dict, List, Deque, Optional
 
 from matchmaking.domain.models import Player, Role, Match
+from matchmaking.core.config import PLAYERS_PER_TEAM, FLEX_ROLES_PER_TEAM, PLAYERS_PER_MATCH
 
 
 class MatchmakingService:
@@ -26,7 +27,7 @@ class MatchmakingService:
 
     def _find_and_form_one_team(self) -> Optional[List[Player]]:
         """(내부 함수) 1탱, 1힐, 3자유 역할 규칙으로 5인 팀 구성을 시도"""
-        if self.get_total_players() < 5:
+        if self.get_total_players() < PLAYERS_PER_TEAM:
             return None
         if not self.waiting_queues[Role.TANK] or not self.waiting_queues[Role.HEALER]:
             return None
@@ -37,7 +38,7 @@ class MatchmakingService:
 
         flex_roles_order = [Role.ASSASSIN, Role.BRUISER]
 
-        for _ in range(3):
+        for _ in range(FLEX_ROLES_PER_TEAM):
             found_flex = False
             for role in flex_roles_order:
                 if self.waiting_queues[role]:
@@ -56,7 +57,7 @@ class MatchmakingService:
         """
         10인 게임 생성을 시도하는 메인 메소드
         """
-        if self.get_total_players() < 10:
+        if self.get_total_players() < PLAYERS_PER_MATCH:
             print(f"[실패] 전체 인원이 10명 미만입니다. (현재: {self.get_total_players()}명)")
             return None
         
