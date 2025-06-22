@@ -1,7 +1,9 @@
-import json
+import json, logging
 from typing import Dict, List, Optional
 
 from matchmaking.domain.models import CharacterTemplate
+
+logger = logging.getLogger(__name__)
 
 class CharacterRoster:
     """
@@ -15,9 +17,9 @@ class CharacterRoster:
                 for data in character_data:
                     template = CharacterTemplate(**data)
                     self._templates[template.id] = template
-            print(f"CharacterRoster가 준비되었습니다. {len(self._templates)}개의 캐릭터 정보를 읽었습니다.")
+            logger.info(f"CharacterRoster가 준비되었습니다. {len(self._templates)}개의 캐릭터 정보를 읽었습니다.")
         except FileNotFoundError:
-            print(f"[오류] 캐릭터 데이터 파일({data_path})을 찾을 수 없습니다.")
+            logger.warning(f"[오류] 캐릭터 데이터 파일({data_path})을 찾을 수 없습니다.")
     
     def get_all_characters(self) -> List[CharacterTemplate]:
         """모든 캐릭터 리스트를 반환"""
