@@ -1,0 +1,95 @@
+# 파이썬으로 구현한 게임 매치메이킹 시스템
+
+이 프로젝트는 히어로즈 오브 더 스톰과 같은 5v5 팀 기반 게임의 매치메이킹 시스템 원리를 학습하고 구현하기 위해 만들어졌습니다.
+
+## 🌟 주요 기능
+
+- **역할군 기반 매칭**: '1탱커, 1힐러'를 최소 조건으로 하는 팀 구성 규칙을 적용합니다.
+- **10인 게임 매치 생성**: 5인으로 구성된 두 팀(Team A, Team B)을 찾아 하나의 완전한 게임(Match)을 생성합니다.
+- **MMR 기반 팀 밸런싱**: 두 팀이 구성된 후, 각 팀의 평균 MMR을 비교하여 밸런스가 맞는 게임인지 확인합니다.
+- **데이터 관리**:
+    - `characters.json`: 게임에 사용될 영웅 목록과 기본 정보를 관리합니다.
+    - `PlayerRepository`: 플레이어 데이터를 관리하는 저장소 계층을 구현하여 DB 연동을 대비한 구조를 갖춥니다.
+- **단위 테스트**: `pytest`를 사용하여 핵심 비즈니스 로직(팀 구성, MMR 계산 등)의 정확성을 검증합니다.
+
+## 🛠️ 기술 스택
+
+- **언어**: Python
+- **웹 프레임워크**: FastAPI
+- **웹 서버**: Uvicorn
+- **데이터 검증**: Pydantic
+- **테스트**: Pytest
+
+## 📂 프로젝트 구조
+
+```
+matchmaking-fastapi/
+│
+├── .gitignore                 # Git이 추적하지 않을 파일/폴더 목록
+├── characters.json            # 캐릭터 목록을 정의하는 JSON 파일
+├── requirements.txt           # 프로젝트에 필요한 라이브러리 목록
+│
+├── matchmaking/               # 핵심 로직이 담긴 메인 패키지
+│   ├── core/                  # 프로젝트 핵심 설정 패키지
+│   │   └── config.py          # 매칭 규칙 등 상수 관리
+│   ├── data/                  # 데이터 소스 관리 패키지
+│   │   ├── roster.py          # characters.json을 읽고 관리
+│   │   └── player_repository.py # 플레이어 데이터를 생성하고 보관
+│   ├── domain/                # 데이터 모델(Pydantic) 정의 패키지
+│   │   └── models.py          # Player, Role, Match 등
+│   └── service/                 # 비즈니스 로직 패키지
+│       └── matchmaking_service.py # 실제 매치메킹 로직
+│
+├── tests/                     # 테스트 코드를 모아두는 폴더
+│   └── test_service.py        # matchmaking.service 모듈을 테스트
+│
+├── main.py                    # FastAPI 서버 실행용 파일 (미완성)
+└── run_simulation.py          # 서버 없이 로직을 수동으로 실행하는 스크립트
+```
+
+## 🚀 설치 및 실행 방법
+
+1.  **저장소 클론**
+    ```bash
+    git clone [저장소 URL]
+    cd matchmaking-fastapi
+    ```
+
+2.  **가상환경 생성 및 활성화**
+    ```bash
+    # 가상환경 생성 (최초 1회)
+    python -m venv venv
+
+    # 가상환경 활성화 (Windows)
+    .\venv\Scripts\activate
+
+    # 가상환경 활성화 (macOS/Linux)
+    source venv/bin/activate
+    ```
+
+3.  **필요한 라이브러리 설치**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **실행**
+    프로젝트를 실행하는 방법은 세 가지가 있습니다.
+
+    -   **A) 시뮬레이션 스크립트 실행 (서버 없이 로직 확인)**
+        ```bash
+        python run_simulation.py
+        ```
+
+    -   **B) 단위 테스트 실행 (로직 자동 검증)**
+        ```bash
+        pytest
+        ```
+
+## 🔮 향후 개선 과제
+
+- **API 엔드포인트 구현**: 현재의 시뮬레이션, 테스트 코드 방식 외에 외부 클라이언트가 실질적으로 매칭을 요청하고 결과를 받을 수 있는 RESTful API 엔드포인트를 구현 필요
+- **데이터베이스 연동**: `PlayerRepository`를 실제 RDBMS(PostgreSQL 등)와 연동하도록 수정.
+- **고급 밸런싱 로직**: MMR 외에 플레이어의 최근 승률, 특정 역할군 숙련도 등을 고려한 다각적인 밸런싱 알고리즘 구현.
+- **기타 고도화**: Redis 활용하여 매칭이 성사되었다는 이벤트 발행
+
+
