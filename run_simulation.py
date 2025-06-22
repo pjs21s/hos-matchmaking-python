@@ -3,45 +3,45 @@ from matchmaking.data.roster import CharacterRoster
 from matchmaking.data.player_repository import PlayerRepository
 from matchmaking.service.matchmaking_service import MatchmakingService
 
-def run_test_scenario():
-    """
-    매치메이킹 시나리오를 실행하는 테스트 함수
-    """
+def run_10_player_scenario():
+    print("--- 10인 매치 시뮬레이션 시작 ---\n")
 
-    print("--- 매치메이킹 시뮬레이션 시작 --- \n")
     roster = CharacterRoster(data_path="characters.json")
     player_repo = PlayerRepository(roster=roster)
     matchmaking_service = MatchmakingService()
 
-    print("\n[1단계] 로스터에서 캐릭터를 선택하여 플레이어를 생성하고 대기열에 추가")
-
-    tank_chars = [c for c in roster.get_all_characters() if c.role.value == "TANK"]
-    healer_chars = [c for c in roster.get_all_characters() if c.role.value == "HEALER"]
-    other_chars = [c for c in roster.get_all_characters() if c.role.value not in ["TANK", "HEALER"]]
-
-    player_one = player_repo.create_player(character_id=random.choice(tank_chars).id)
-    matchmaking_service.add_player_to_queue(player_one)
-
-    player_two = player_repo.create_player(character_id=random.choice(healer_chars).id)
-    matchmaking_service.add_player_to_queue(player_two)
-
-    for _ in range(3):
-        random_char = random.choice(other_chars)
-        p = player_repo.create_player(character_id=random_char.id)
-        matchmaking_service.add_player_to_queue(p)
-        other_chars.remove(random_char)
-
-    print("\n[2단계] 매칭을 시도합니다.")
-    team = matchmaking_service.try_create_team()
-
-    if team:
-        print("최종 매칭 성공! 생성된 팀 아래와 같음")
-        for player in team:
-            print(f" - {player.model_dump()}")
-    else:
-        print("최종 매칭 실패")
+    print("\n[1단계] 12명의 플레이어를 대기열에 추가")
     
-    print("\n --- 매치메이킹 시뮬레이션 종료 ---")
+    all_character_ids = [c.id for c in roster.get_all_characters()]
+    
+    try:
+        selected_ids = random.sample(all_character_ids, 12)
+    except ValueError:
+        print("[오류] characters.json에 정의된 캐릭터가 12명보다 적다.")
+        return
+
+    for char_id in selected_ids:
+        # ID를 사용해 플레이어를 생성하고 큐에 추가.
+        player = player_repo.create_player(character_id=char_id)
+        if player:
+            matchmaking_service.add_player_to_queue(player)
+
+    # 3. 10인 매칭 시도
+    match = matchmaking_service.try_create_match()
+
+    # 4. 결과 확인
+    if match:
+        print("\n=========================================")
+        print("최종 매칭 성공! 10인 게임이 생성")
+        print(f"  - TEAM A: {[p.name for p in match.team_a]}")
+        print(f"  - TEAM B: {[p.name for p in match.team_b]}")
+        print("=========================================")
+        print(f"남은 대기 인원: {matchmaking_service.get_total_players()}명")
+    else:
+        print("\n=========================================")
+        print("최종 매칭 실패.")
+        print(f"남은 대기 인원: {matchmaking_service.get_total_players()}명")
+        print("=========================================")
 
 if __name__ == "__main__":
-    run_test_scenario()
+    run_10_player_scenario()

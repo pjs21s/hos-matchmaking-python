@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 from pydantic import BaseModel
 
 class Role(str, Enum):
@@ -16,3 +17,7 @@ class Player(BaseModel):
     id: int
     name: str
     role: Role
+
+class Match(BaseModel):
+    team_a: List[Player]
+    team_b: List[Player]

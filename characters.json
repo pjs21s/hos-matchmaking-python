@@ -10,6 +10,16 @@
     "role": "TANK"
   },
   {
+    "id": 3,
+    "name": "아서스",
+    "role": "TANK"
+  },
+  {
+    "id": 4,
+    "name": "디아블로",
+    "role": "TANK"
+  },
+  {
     "id": 11,
     "name": "알렉스트라자",
     "role": "HEALER"
@@ -22,6 +32,16 @@
   {
     "id": 13,
     "name": "카라짐",
+    "role": "HEALER"
+  },
+  {
+    "id": 14,
+    "name": "리 리",
+    "role": "HEALER"
+  },
+  {
+    "id": 15,
+    "name": "루시우",
     "role": "HEALER"
   },
   {
@@ -40,6 +60,26 @@
     "role": "ASSASSIN"
   },
   {
+    "id": 24,
+    "name": "켈투자드",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 25,
+    "name": "리밍",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 26,
+    "name": "트레이서",
+    "role": "ASSASSIN"
+  },
+  {
+    "id": 27,
+    "name": "겐지",
+    "role": "ASSASSIN"
+  },
+  {
     "id": 31,
     "name": "소냐",
     "role": "BRUISER"
@@ -47,6 +87,26 @@
   {
     "id": 32,
     "name": "데하카",
+    "role": "BRUISER"
+  },
+  {
+    "id": 33,
+    "name": "아르타니스",
+    "role": "BRUISER"
+  },
+  {
+    "id": 34,
+    "name": "스랄",
+    "role": "BRUISER"
+  },
+  {
+    "id": 35,
+    "name": "라그나로스",
+    "role": "BRUISER"
+  },
+  {
+    "id": 36,
+    "name": "렉사르",
     "role": "BRUISER"
   }
 ]
