@@ -1,107 +1,103 @@
-# 파이썬으로 구현한 게임 매치메이킹 시스템
+ Game Matchmaking System in Python
 
-이 프로젝트는 히어로즈 오브 더 스톰과 같은 5v5 팀 기반 게임의 매치메이킹 시스템 원리를 학습하고 구현하기 위해 만들어졌습니다.
+This project was created to learn and implement the principles of a matchmaking system for 5v5 team-based games, inspired by titles like Heroes of the Storm.
 
-## 주요 기능
+## 🌟 Key Features
 
-- **역할군 기반 매칭**: '1탱커, 1힐러'를 최소 조건으로 하는 팀 구성 규칙을 적용합니다.
-- **10인 게임 매치 생성**: 5인으로 구성된 두 팀(Team A, Team B)을 찾아 하나의 완전한 게임(Match)을 생성합니다.
-- **MMR 기반 팀 밸런싱**: 두 팀이 구성된 후, 각 팀의 평균 MMR을 비교하여 밸런스가 맞는 게임인지 확인합니다.
-- **데이터 관리**:
-    - `characters.json`: 게임에 사용될 영웅 목록과 기본 정보를 관리합니다.
-    - `PlayerRepository`: 플레이어 데이터를 관리하는 저장소 계층을 구현하여 DB 연동을 대비한 구조를 갖춥니다.
-- **단위 테스트**: `pytest`를 사용하여 핵심 비즈니스 로직(팀 구성, MMR 계산 등)의 정확성을 검증합니다.
+- **Role-based Matchmaking**: Implements team composition rules requiring a minimum of '1 Tank, 1 Healer'.
+- **10-Player Match Creation**: Forms a complete game (Match) by finding two teams of five (Team A and Team B).
+- **MMR-based Team Balancing**: After forming two teams, it compares their average MMR to ensure a balanced match.
+- **Data Management**:
+    - `characters.json`: Manages the list of available heroes and their basic information.
+    - `PlayerRepository`: Implements a repository layer to manage player data, designed for future database integration.
+- **Unit Testing**: Uses `pytest` to verify the correctness of core business logic (team composition, MMR calculation, etc.).
 
-## 기술 스택
+## 🛠️ Tech Stack
 
-- **언어**: Python
-- **웹 프레임워크**: FastAPI
-- **웹 서버**: Uvicorn
-- **데이터 검증**: Pydantic
-- **테스트**: Pytest
+- **Language**: Python
+- **Web Framework**: FastAPI
+- **Web Server**: Uvicorn
+- **Data Validation**: Pydantic
+- **Testing**: Pytest
 
-## 프로젝트 구조
+## 📂 Project Structure
 
 ```
 matchmaking-fastapi/
 │
-├── .gitignore                 # Git이 추적하지 않을 파일/폴더 목록
-├── characters.json            # 캐릭터 목록을 정의하는 JSON 파일
-├── requirements.txt           # 프로젝트에 필요한 라이브러리 목록
+├── .gitignore                 # Specifies intentionally untracked files to ignore
+├── characters.json            # JSON file defining the character roster
+├── requirements.txt           # List of project dependencies
 │
-├── matchmaking/               # 핵심 로직이 담긴 메인 패키지
-│   ├── core/                  # 프로젝트 핵심 설정 패키지
-│   │   └── config.py          # 매칭 규칙 등 상수 관리
-│   ├── data/                  # 데이터 소스 관리 패키지
-│   │   ├── roster.py          # characters.json을 읽고 관리
-│   │   └── player_repository.py # 플레이어 데이터를 생성하고 보관
-│   ├── domain/                # 데이터 모델(Pydantic) 정의 패키지
-│   │   └── models.py          # Player, Role, Match 등
-│   └── service/                 # 비즈니스 로직 패키지
-│       └── matchmaking_service.py # 실제 매치메킹 로직
+├── matchmaking/               # Main package for core logic
+│   ├── core/                  # Core project configuration package
+│   │   └── config.py          # Manages constants like matching rules
+│   ├── data/                  # Data source management package
+│   │   ├── roster.py          # Reads and manages characters.json
+│   │   └── player_repository.py # Creates and stores player data
+│   ├── domain/                # Data models (Pydantic) package
+│   │   └── models.py          # Player, Role, Match, etc.
+│   └── service/                 # Business logic package
+│       └── matchmaking_service.py # The actual matchmaking logic
 │
-├── tests/                     # 테스트 코드를 모아두는 폴더
-│   └── test_service.py        # matchmaking.service 모듈을 테스트
+├── tests/                     # Folder for test code
+│   └── test_service.py        # Tests for the matchmaking.service module
 │
-├── main.py                    # FastAPI 서버 실행용 파일 (미완성)
-└── run_simulation.py          # 서버 없이 로직을 수동으로 실행하는 스크립트
+├── main.py                    # Entry point for the FastAPI server (incomplete)
+└── run_simulation.py          # Script to run the logic manually without a server
 ```
 
-## 설치 및 실행 방법
+## 🚀 Setup and Execution
 
-1.  **저장소 클론**
+1.  **Clone the repository**
     ```bash
-    git clone [저장소 URL]
+    git clone [repository URL]
     cd matchmaking-fastapi
     ```
 
-2.  **가상환경 생성 및 활성화**
+2.  **Create and activate a virtual environment**
     ```bash
-    # 가상환경 생성 (최초 1회)
+    # Create a virtual environment (one-time setup)
     python -m venv venv
 
-    # 가상환경 활성화 (Windows)
+    # Activate on Windows
     .\venv\Scripts\activate
 
-    # 가상환경 활성화 (macOS/Linux)
+    # Activate on macOS/Linux
     source venv/bin/activate
     ```
 
-3.  **필요한 라이브러리 설치**
+3.  **Install dependencies**
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **실행**
-    프로젝트를 실행하는 방법은 세 가지가 있습니다.
+4.  **Run the project**
+    There are two ways to run the project:
 
-    -   **A) 시뮬레이션 스크립트 실행 (서버 없이 로직 확인)**
+    -   **A) Run the simulation script (to check logic without a server)**
         ```bash
         python run_simulation.py
         ```
 
-    -   **B) 단위 테스트 실행 (로직 자동 검증)**
+    -   **B) Run unit tests (to automatically verify logic)**
         ```bash
         pytest
         ```
 
-## 향후 개선 과제
+## 🔮 Future Improvements
 
-- **API 엔드포인트 구현**: 현재의 시뮬레이션, 테스트 코드 방식 외에 외부 클라이언트가 실질적으로 매칭을 요청하고 결과를 받을 수 있는 RESTful API 엔드포인트를 구현 필요
-- **데이터베이스 연동**: `PlayerRepository`를 실제 RDBMS(PostgreSQL 등)와 연동하도록 수정.
-- **고급 밸런싱 로직**: MMR 외에 플레이어의 최근 승률, 특정 역할군 숙련도 등을 고려한 다각적인 밸런싱 알고리즘 구현.
-- **기타 고도화**: Redis 활용하여 매칭이 성사되었다는 이벤트 발행
+- **Implement API Endpoints**: Implement practical RESTful API endpoints for external clients to request matches and get results, beyond the current simulation/testing approach.
+- **Database Integration**: Refactor `PlayerRepository` to integrate with a real RDBMS (e.g., PostgreSQL).
+- **Advanced Balancing Logic**: Implement a more sophisticated balancing algorithm that considers factors beyond MMR, such as recent win rates or role-specific proficiency.
+- **Further Enhancements**: Utilize Redis to publish a "match found" event, creating a more scalable, event-driven architecture.
 
+## 📝 Key Design Decisions (Q&A)
 
-## 질문들
+- **Q: Shouldn't we find players with similar MMR during the team formation process (i.e., find an optimal group of 10)?**
 
-- 팀을 만드는 과정에서 MMR이 비슷한 플레이어를 가져와야 맞지 않을까? (최적의 10인 찾기)
+  **A:** While this theoretically creates the most balanced teams, it is computationally complex and slow (related to the subset sum problem). It can lead to extremely long queue times while the system searches for a "perfect" combination. Therefore, a more practical approach was taken: first, form two teams that satisfy the role requirements. Then, check the balance between them. If the average MMR difference is small, the match proceeds. If it's large, the system can attempt to swap players. If balancing still fails, the match is disbanded, and players are returned to the queue. This prioritizes reasonable queue times over perfect balance.
 
-이론적으로는 가장 균형 잡힌 두 팀이 만들어지지만 복잡하고 느리다. 극단적으로 찾지 못하면 탐색은 계속 이루어져야 한다.
-그러므로 팀을 우선 구성하고 밸런싱에 최대한 맞게 구성원을 교환하는 방식으로 한다. 우선 두 팀을 만든 후 평균 MMR 차이가 크지 않다면 그대로 진행한다.
-만약 차이가 크다면 플레이어를 교환한다. 그럼에도 안되면 다시 매칭을 하면 된다.
+- **Q: In a real game, how are 10 players sent to a game session after a match is made?**
 
-- 실제 게임에서는 매칭이 완료되면 10명의 플레이어를 어떻게 게임 속으로 보내는 것인가?
-
-간단하게 말하면 Match 객체를 직접 전달하는게 아니라 매칭이 성사되었다는 메세지를 Broadcast 한다.
-그러면 해당 채널을 구독하고 있던 다른 서비스가 게임 세션을 생성한다. 이후에는 게임 서버 할당, 플레이어에게 접속 정보 전파 그리고 게임 시작이 있다.
+  **A:** Instead of passing the `Match` object directly between services, the system broadcasts a "match found" event, typically using a message broker like Redis Pub/Sub. A separate `SessionService` listens for this event and creates a unique game session in the database. A `GameServerManager` then allocates a dedicated game server from a fleet of available servers. Finally, the connection information (IP, port) for this dedicated server is sent to all 10 players (usually via WebSockets), who then connect to it to start the game.
